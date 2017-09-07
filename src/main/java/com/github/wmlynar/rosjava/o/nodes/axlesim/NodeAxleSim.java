@@ -89,7 +89,7 @@ public class NodeAxleSim extends AbstractNodeMain {
 	            o.yaw = simulator.getAngle();
 	            o.linear = simulator.getSpeed();
 	            o.angular = simulator.getRotation();
-	            Odometry odometry = JavaToRos.newOdomMessage(o);
+	            Odometry odometry = JavaToRos.newOdometryMessage(o);
 	            odomPublisher.publish(odometry);
 	            
 	            Dist dist = new Dist();

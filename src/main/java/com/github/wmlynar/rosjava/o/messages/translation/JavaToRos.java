@@ -25,7 +25,7 @@ public class JavaToRos {
         return m;
     }
 
-    public static Odometry newOdomMessage(Odom o) {
+    public static Odometry newOdometryMessage(Odom o) {
         Odometry m = messageFactory.newFromType(Odometry._TYPE);
         m.getHeader().setStamp(o.time);
         m.getPose().getPose().getPosition().setX(o.x);

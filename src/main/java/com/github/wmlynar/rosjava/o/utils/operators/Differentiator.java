@@ -1,4 +1,4 @@
-package com.github.wmlynar.rosjava.o.nodes.axlefilter.internal;
+package com.github.wmlynar.rosjava.o.utils.operators;
 
 public class Differentiator {
 	

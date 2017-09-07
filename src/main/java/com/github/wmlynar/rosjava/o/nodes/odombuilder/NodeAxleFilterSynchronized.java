@@ -35,7 +35,7 @@
  * the License.
  */
 
-package com.github.wmlynar.rosjava.o.nodes.axlefilter;
+package com.github.wmlynar.rosjava.o.nodes.odombuilder;
 
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
@@ -65,18 +65,9 @@ import sensor_msgs.LaserScan;
  */
 public class NodeAxleFilterSynchronized extends AbstractNodeMain {
 
-    private Subscriber<Odometry> odomSubscriber;
-    private Subscriber<LaserScan> scanSubscriber;
     private Subscriber<Vector3Stamped> distSubscriber;
-    private Subscriber<Imu> imuSubscriber;
-
-    private CountUpLatch messagesCount = new CountUpLatch(0);
-
-    private ScanMessageInterpreter scanInterpreter = new ScanMessageInterpreter();
-    
+	private OdomStateMachine filter = new OdomStateMachine();
     private int queueSize;
-	
-	private AxleFilterStateMachine filter = new AxleFilterStateMachine();
 
     public NodeAxleFilterSynchronized(int queueSize) {
         this.queueSize = queueSize;
@@ -84,65 +75,21 @@ public class NodeAxleFilterSynchronized extends AbstractNodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("ros_log_recorder");
+        return GraphName.of("ros_odom_builder");
     }
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
     	
-        TimeSequencer timeSquencer = new TimeSequencer(1, 0.1, connectedNode);
-
-        odomSubscriber = connectedNode.newSubscriber("odom_beacon", Odometry._TYPE);
-        odomSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
-        odomSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Odometry>() {
-            @Override
-            public void onNewMessage(Odometry m) {
-            	Odom odom = RosToJava.fromOdom(m);
-            	filter.processOdom(odom);
-                countUp();
-            }
-        },0), 10);
-
-        scanSubscriber = connectedNode.newSubscriber("scan", LaserScan._TYPE);
-        scanSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
-        scanSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<LaserScan>() {
-            @Override
-            public void onNewMessage(LaserScan m) {
-            	Scan scan = RosToJava.fromScan(m);
-                countUp();
-            }
-        },1), queueSize);
-
         distSubscriber = connectedNode.newSubscriber("dist", Vector3Stamped._TYPE);
         distSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
-        distSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Vector3Stamped>() {
+        distSubscriber.addMessageListener(new MessageListener<Vector3Stamped>() {
             @Override
             public void onNewMessage(Vector3Stamped m) {
             	Dist dist = RosToJava.fromDist(m);
             	filter.processDist(dist);
-                countUp();
             }
-        },2), queueSize);
-        
-        imuSubscriber = connectedNode.newSubscriber("data", Imu._TYPE);
-        imuSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
-        imuSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Imu>() {
-            @Override
-            public void onNewMessage(Imu imu) {
-            	Inertial in = RosToJava.fromImu(imu);
-                countUp();
-            }
-        },3), queueSize);
+        }, queueSize);
     }
 
-    public void awaitForMessages(int count) {
-        try {
-			messagesCount.awaitFor(count);
-		} catch (InterruptedException e) {
-		}
-    }
-
-	private void countUp() {
-		messagesCount.countUp();
-	}
 }

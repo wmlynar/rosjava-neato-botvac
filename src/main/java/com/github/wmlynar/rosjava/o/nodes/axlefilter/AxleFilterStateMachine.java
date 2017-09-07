@@ -8,8 +8,8 @@ import com.github.wmlynar.rosjava.o.messages.Odom;
 import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.AxleWidthModel;
 import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.AxleWidthRotationObservation;
 import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.AxleWidthVelocityLeftObservation;
-import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.Difference;
-import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.Differentiator;
+import com.github.wmlynar.rosjava.o.utils.operators.Difference;
+import com.github.wmlynar.rosjava.o.utils.operators.Differentiator;
 import com.github.wmlynar.rosjava.plots.Plots;
 
 public class AxleFilterStateMachine {
@@ -37,7 +37,7 @@ public class AxleFilterStateMachine {
 		x[AxleWidthModel.S][0] = 0;
 		x[AxleWidthModel.A][0] = 0;
 		x[AxleWidthModel.ROT][0] = 0;
-		x[AxleWidthModel.WIDTH][0] = 0.1235; // initial value with error
+		x[AxleWidthModel.WIDTH][0] = 0.125; // initial value with error
 
 		double[][] cov = model.getCovariance();
 		cov[AxleWidthModel.X][AxleWidthModel.X] = 1e-10;
@@ -45,7 +45,7 @@ public class AxleFilterStateMachine {
 		cov[AxleWidthModel.S][AxleWidthModel.S] = 1e-0;
 		cov[AxleWidthModel.A][AxleWidthModel.A] = 1e-10;
 		cov[AxleWidthModel.ROT][AxleWidthModel.ROT] = 1e-0;
-		cov[AxleWidthModel.WIDTH][AxleWidthModel.WIDTH] = 0.2*0.2;
+		cov[AxleWidthModel.WIDTH][AxleWidthModel.WIDTH] = 0.1*0.1;
 
 		cov = model.getProcessNoiseCovariance();
 		cov[AxleWidthModel.X][AxleWidthModel.X] = 1e-10;
@@ -56,7 +56,7 @@ public class AxleFilterStateMachine {
 		cov[AxleWidthModel.WIDTH][AxleWidthModel.WIDTH] = 1e-10;
 
 		cov = rotationObservation.getObservationNoiseCovariance();
-		cov[0][0] = 1e-6;
+		cov[0][0] = 0.1*0.1;
 
 		cov = leftObservation.getObservationNoiseCovariance();
 		cov[0][0] = 1e-6;
