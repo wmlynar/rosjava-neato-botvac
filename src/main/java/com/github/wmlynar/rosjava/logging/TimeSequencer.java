@@ -9,7 +9,8 @@ import org.ros.internal.message.Message;
 import org.ros.message.MessageListener;
 import org.ros.message.Time;
 import org.ros.node.ConnectedNode;
-import org.ros.node.topic.Subscriber;
+
+import nav_msgs.Odometry;
 
 public class TimeSequencer<T extends Message> {
 
@@ -20,7 +21,12 @@ public class TimeSequencer<T extends Message> {
 
                 @Override
                 public int compare(MessageWithTime m1, MessageWithTime m2) {
-                    return m1.time.compareTo(m2.time);
+                	int result = m1.time.compareTo(m2.time);
+                	if(result!=0) {
+                		return result;
+                	} else {
+                		return m1.position - m2.position;
+                	}
                 }
             });
     private Thread thread;
@@ -56,14 +62,15 @@ public class TimeSequencer<T extends Message> {
         this.thread.start();
     }
 
-    public void addSubscriber(Subscriber<T> subscriber, MessageListener<T> messageListener, int queueSize) {
-        subscriber.addMessageListener(new MessageListener<T>() {
-            @Override
-            public void onNewMessage(T message) {
+	public MessageListener<T> getListener(MessageListener<T> messageListener, int position) {
+		return new MessageListener<T>() {
+			
+			@Override
+			public void onNewMessage(T message) {
                 Time time = message.toRawMessage().getMessage("header").toRawMessage().getTime("stamp");
-                queue.add(new MessageWithTime(time, message, messageListener));
-            }
-        }, queueSize);
-    }
+                queue.add(new MessageWithTime(time, position, message, messageListener));
+			}
+		};
+	}
 
 }

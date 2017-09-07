@@ -35,7 +35,7 @@ public class AxleFilterStateMachine {
 		double[][] x = model.getState();
 		x[AxleWidthModel.X][0] = 0;
 		x[AxleWidthModel.Y][0] = 0;
-		x[AxleWidthModel.S][0] = 1;
+		x[AxleWidthModel.S][0] = 0;
 		x[AxleWidthModel.A][0] = 0;
 		x[AxleWidthModel.ROT][0] = 0;
 		x[AxleWidthModel.WIDTH][0] = 0.1235; // initial value with error
@@ -43,18 +43,18 @@ public class AxleFilterStateMachine {
 		double[][] cov = model.getCovariance();
 		cov[AxleWidthModel.X][AxleWidthModel.X] = 1e-10;
 		cov[AxleWidthModel.Y][AxleWidthModel.Y] = 1e-10;
-		cov[AxleWidthModel.S][AxleWidthModel.S] = 1e-2;
+		cov[AxleWidthModel.S][AxleWidthModel.S] = 1e-0;
 		cov[AxleWidthModel.A][AxleWidthModel.A] = 1e-10;
-		cov[AxleWidthModel.ROT][AxleWidthModel.ROT] = 1e-2;
+		cov[AxleWidthModel.ROT][AxleWidthModel.ROT] = 1e-0;
 		cov[AxleWidthModel.WIDTH][AxleWidthModel.WIDTH] = 1e-2;
 
 		cov = model.getProcessNoiseCovariance();
-		cov[AxleWidthModel.X][AxleWidthModel.X] = 1e-8;
-		cov[AxleWidthModel.Y][AxleWidthModel.Y] = 1e-8;
-		cov[AxleWidthModel.S][AxleWidthModel.S] = 1e-8;
+		cov[AxleWidthModel.X][AxleWidthModel.X] = 1e-10;
+		cov[AxleWidthModel.Y][AxleWidthModel.Y] = 1e-10;
+		cov[AxleWidthModel.S][AxleWidthModel.S] = 1e-10;
 		cov[AxleWidthModel.A][AxleWidthModel.A] = 1e-2;
 		cov[AxleWidthModel.ROT][AxleWidthModel.ROT] = 1e-2;
-		cov[AxleWidthModel.WIDTH][AxleWidthModel.WIDTH] = 1e-8;
+		cov[AxleWidthModel.WIDTH][AxleWidthModel.WIDTH] = 1e-10;
 
 		cov = rotationObservation.getObservationNoiseCovariance();
 		cov[0][0] = 1e-6;

@@ -94,51 +94,49 @@ public class NodeAxleFilterSynchronized extends AbstractNodeMain {
     @Override
     public void onStart(ConnectedNode connectedNode) {
 
-        TimeSequencer squencer = new TimeSequencer(0.5, 0.1, connectedNode);
+        TimeSequencer timeSquencer = new TimeSequencer(0.5, 0.1, connectedNode);
 
         odomSubscriber = connectedNode.newSubscriber("odom", Odometry._TYPE);
         odomSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
-        squencer.addSubscriber(odomSubscriber,new MessageListener<Odometry>() {
+        odomSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Odometry>() {
             @Override
             public void onNewMessage(Odometry m) {
             	Odom odom = RosToJava.fromOdom(m);
-            	
             	filter.processOdom(odom);
-
                 countUp();
             }
-        }, queueSize);
+        },0), 10);
 
         scanSubscriber = connectedNode.newSubscriber("scan", LaserScan._TYPE);
         scanSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
-        squencer.addSubscriber(scanSubscriber,new MessageListener<LaserScan>() {
+        scanSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<LaserScan>() {
             @Override
             public void onNewMessage(LaserScan m) {
             	Scan scan = RosToJava.fromScan(m);
                 countUp();
             }
-        }, queueSize);
+        },1), queueSize);
 
         distSubscriber = connectedNode.newSubscriber("dist", Vector3Stamped._TYPE);
         distSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
-        squencer.addSubscriber(distSubscriber,new MessageListener<Vector3Stamped>() {
+        distSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Vector3Stamped>() {
             @Override
             public void onNewMessage(Vector3Stamped m) {
             	Dist dist = RosToJava.fromDist(m);
             	filter.processDist(dist);
                 countUp();
             }
-        }, queueSize);
+        },2), queueSize);
         
         imuSubscriber = connectedNode.newSubscriber("data", Imu._TYPE);
         imuSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
-        squencer.addSubscriber(imuSubscriber,new MessageListener<Imu>() {
+        imuSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Imu>() {
             @Override
             public void onNewMessage(Imu imu) {
             	Inertial in = RosToJava.fromImu(imu);
                 countUp();
             }
-        }, queueSize);
+        },3), queueSize);
     }
 
     public void awaitForMessages(int count) {
