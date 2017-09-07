@@ -54,6 +54,7 @@ import com.github.wmlynar.rosjava.o.messages.Odom;
 import com.github.wmlynar.rosjava.o.messages.Scan;
 import com.github.wmlynar.rosjava.o.messages.translation.JavaToRos;
 import com.github.wmlynar.rosjava.o.messages.translation.RosToJava;
+import com.github.wmlynar.rosjava.o.utils.operators.AngleDenormalize;
 import com.github.wmlynar.rosjava.o.utils.operators.AngleDifferentiator;
 import com.github.wmlynar.rosjava.o.utils.operators.Differentiator;
 import com.github.wmlynar.rosjava.o.utils.operators.Integrator;
@@ -87,7 +88,9 @@ public class NodeBeaconDetector extends AbstractNodeMain {
 	private ZeroWhenNotChanging zeroScanAngle = new ZeroWhenNotChanging(2, 1e-3);
 	private ZeroWhenNotChanging zeroOdomAngle = new ZeroWhenNotChanging(2, 1e-3);
 	private Integrator gyroSummator = new Integrator();
-	private ZeroWhenNotChanging zeroGyroAngle = new ZeroWhenNotChanging(2, 1e-3);
+	private ZeroWhenNotChanging zeroGyroAngle = new ZeroWhenNotChanging(20, 1e-3);
+	private AngleDenormalize denormalizeScanAngle = new AngleDenormalize();
+	private AngleDenormalize denormalizeOdomAngle = new AngleDenormalize();
 	
 
 	public NodeBeaconDetector(int queueSize) {
@@ -112,8 +115,8 @@ public class NodeBeaconDetector extends AbstractNodeMain {
 				
 				double angle = scanInterpreter.processScanToAngle(scan.ranges);
 				double angular = differentiator.differentiate(scan.time.toSeconds(), angle);
-				double zeroangle = zeroScanAngle.process(angle);
-				if(!differentiator.isOk() || !zeroScanAngle.isOk()) {
+				double zeroangle = zeroScanAngle.process(denormalizeScanAngle.denormalize(angle));
+				if(!differentiator.isOk() || !zeroScanAngle.isOk() || !denormalizeScanAngle.isOk()) {
 					return;
 				}
 				Odom odom = new Odom();
@@ -136,8 +139,8 @@ public class NodeBeaconDetector extends AbstractNodeMain {
             @Override
             public void onNewMessage(Odometry m) {
             	Odom odom = RosToJava.fromOdom(m);
-        		double zeroangle = zeroOdomAngle.process(odom.yaw);
-        		if(!zeroOdomAngle.isOk()) {
+        		double zeroangle = zeroOdomAngle.process(denormalizeOdomAngle.denormalize(odom.yaw));
+        		if(!zeroOdomAngle.isOk() || !denormalizeOdomAngle.isOk()) {
         			return;
         		}
                 Plots.plotXTime("angle", "odom", odom.time.toSeconds(), zeroangle);
