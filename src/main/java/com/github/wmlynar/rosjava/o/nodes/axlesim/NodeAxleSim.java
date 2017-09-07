@@ -14,6 +14,8 @@ import com.github.wmlynar.rosjava.o.messages.Dist;
 import com.github.wmlynar.rosjava.o.messages.Odom;
 import com.github.wmlynar.rosjava.o.messages.translation.JavaToRos;
 import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.AxleWidthSimulator;
+import com.github.wmlynar.rosjava.utils.CountUpPublisherListener;
+import com.github.wmlynar.rosjava.utils.CountUpSubscriberListener;
 import com.github.wmlynar.rosjava.utils.RosMain;
 
 import geometry_msgs.Vector3Stamped;
@@ -32,6 +34,8 @@ public class NodeAxleSim extends AbstractNodeMain {
 
 	private CountDownLatch initializedLatch = new CountDownLatch(1);
 	private CountDownLatch finishedLatch = new CountDownLatch(1);
+
+    private CountUpPublisherListener publisherListener = new CountUpPublisherListener();
 	
 	private double simTime;
 	private Time startTime;
@@ -43,14 +47,19 @@ public class NodeAxleSim extends AbstractNodeMain {
 
 	@Override
 	public void onStart(final ConnectedNode connectedNode) {
+		publisherListener.setLog(connectedNode.getLog());
+		
 		odomPublisher = connectedNode.newPublisher("odom", Odometry._TYPE);
-		odomPublisher.addListener(RosMain.getPublisherListener());
+		odomPublisher.addListener(publisherListener);
+		
 		scanPublisher = connectedNode.newPublisher("scan", LaserScan._TYPE);
-		scanPublisher.addListener(RosMain.getPublisherListener());
+		scanPublisher.addListener(publisherListener);
+		
 		distPublisher = connectedNode.newPublisher("dist", Vector3Stamped._TYPE);
-		distPublisher.addListener(RosMain.getPublisherListener());
+		distPublisher.addListener(publisherListener);
+		
 		imuPublisher = connectedNode.newPublisher("data", Imu._TYPE);
-		imuPublisher.addListener(RosMain.getPublisherListener());
+		imuPublisher.addListener(publisherListener);
 
 		this.connectedNode = connectedNode;
 
@@ -108,10 +117,15 @@ public class NodeAxleSim extends AbstractNodeMain {
 		finishedLatch.await();
 	}
 
+    public void awaitForConnections(int count) throws InterruptedException {
+    	publisherListener.awaitForConnections(count);
+    }
+    
 	private Time getSimTime(double simTime) {
 		if (this.startTime==null) {
 			this.startTime=connectedNode.getCurrentTime();
 		}
 		return startTime.add(new Duration(simTime));
 	}
+
 }

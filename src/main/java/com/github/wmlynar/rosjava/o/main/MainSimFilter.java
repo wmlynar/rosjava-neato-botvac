@@ -5,17 +5,19 @@ import com.github.wmlynar.rosjava.o.nodes.axlesim.NodeAxleSim;
 import com.github.wmlynar.rosjava.utils.RosMain;
 
 public class MainSimFilter {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
         RosMain.connectToRosCoreWithoutEnvironmentVariables();
 
-        NodeAxleFilterSynchronized subscriber = new NodeAxleFilterSynchronized(10);
-        RosMain.executeNode(subscriber);
+        NodeAxleFilterSynchronized filter = new NodeAxleFilterSynchronized(10);
+        RosMain.executeNode(filter);
         
         NodeAxleSim simNode = new NodeAxleSim();
         RosMain.executeNode(simNode);
-        simNode.start();
         
-		
+        filter.awaitForConnections(4);
+        simNode.awaitForConnections(5);
+        
+        simNode.start();
 	}
 
 }
