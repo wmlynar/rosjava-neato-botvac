@@ -54,6 +54,7 @@ import com.github.wmlynar.rosjava.o.messages.Odom;
 import com.github.wmlynar.rosjava.o.messages.Scan;
 import com.github.wmlynar.rosjava.o.messages.translation.JavaToRos;
 import com.github.wmlynar.rosjava.o.messages.translation.RosToJava;
+import com.github.wmlynar.rosjava.o.nodes.odombuilder.OdomSimulator;
 import com.github.wmlynar.rosjava.o.utils.operators.AngleDenormalize;
 import com.github.wmlynar.rosjava.o.utils.operators.AngleDifferentiator;
 import com.github.wmlynar.rosjava.o.utils.operators.Differentiator;
@@ -79,10 +80,11 @@ public class NodeBeaconDetector extends AbstractNodeMain {
 
 	private int queueSize;
 	private Subscriber<LaserScan> scanSubscriber;
-	private Publisher<Odometry> odomPublisher;
     private Subscriber<Odometry> odomSubscriber;
     private Subscriber<Imu> imuSubscriber;
-    
+
+	private Publisher<Odometry> odomPublisher;
+
 	private ScanMessageInterpreter scanInterpreter = new ScanMessageInterpreter();
 	private AngleDifferentiator differentiator = new AngleDifferentiator(1e-6);
 	private ZeroWhenNotChanging zeroScanAngle = new ZeroWhenNotChanging(2, 1e-3);
@@ -91,7 +93,6 @@ public class NodeBeaconDetector extends AbstractNodeMain {
 	private ZeroWhenNotChanging zeroGyroAngle = new ZeroWhenNotChanging(20, 1e-3);
 	private AngleDenormalize denormalizeScanAngle = new AngleDenormalize();
 	private AngleDenormalize denormalizeOdomAngle = new AngleDenormalize();
-	
 
 	public NodeBeaconDetector(int queueSize) {
 		this.queueSize = queueSize;
@@ -104,7 +105,7 @@ public class NodeBeaconDetector extends AbstractNodeMain {
 
 	@Override
 	public void onStart(ConnectedNode connectedNode) {
-
+		
 		scanSubscriber = connectedNode.newSubscriber("scan", LaserScan._TYPE);
 		scanSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
 		scanSubscriber.addMessageListener(new MessageListener<LaserScan>() {
@@ -159,15 +160,6 @@ public class NodeBeaconDetector extends AbstractNodeMain {
                 Plots.plotXTime("angle", "gyro", in.time.toSeconds(), angle);
             }
         }, queueSize);
-        
-//        Scanner keyboard= new Scanner(System.in);
-//
-//        while(true) {
-//            String myint = keyboard.next();
-//            System.out.println(myint);
-//            zeroOdomAngle.zero();
-//            zeroScanAngle.zero();
-//        }
         
 	}
 
