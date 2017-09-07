@@ -44,16 +44,11 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Subscriber;
 
-import com.github.wmlynar.rosjava.kf.KalmanFilter;
 import com.github.wmlynar.rosjava.o.messages.Dist;
 import com.github.wmlynar.rosjava.o.messages.Inertial;
 import com.github.wmlynar.rosjava.o.messages.Odom;
 import com.github.wmlynar.rosjava.o.messages.Scan;
 import com.github.wmlynar.rosjava.o.messages.translation.RosToJava;
-import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.AxleWidthModel;
-import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.AxleWidthRotationObservation;
-import com.github.wmlynar.rosjava.o.nodes.axlefilter.internal.AxleWidthVelocityLeftObservation;
-import com.github.wmlynar.rosjava.plots.Plots;
 import com.github.wmlynar.rosjava.utils.CountUpLatch;
 import com.github.wmlynar.rosjava.utils.RosMain;
 import com.github.wmlynar.rosjava.utils.ScanMessageInterpreter;

@@ -4,8 +4,6 @@ import org.ros.internal.message.Message;
 import org.ros.message.MessageListener;
 import org.ros.message.Time;
 
-import nav_msgs.Odometry;
-
 public class MessageWithTime<T> {
     public Time time;
     public Message message;

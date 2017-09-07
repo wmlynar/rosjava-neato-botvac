@@ -1,6 +1,5 @@
 package com.github.wmlynar.rosjava.o.nodes.axlefilter;
 
-import org.ros.message.Duration;
 import org.ros.message.Time;
 
 import com.github.wmlynar.rosjava.kf.KalmanFilter;

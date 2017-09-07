@@ -10,8 +10,6 @@ import org.ros.message.MessageListener;
 import org.ros.message.Time;
 import org.ros.node.ConnectedNode;
 
-import nav_msgs.Odometry;
-
 public class TimeSequencer<T extends Message> {
 
     private Object lock = new Object();
