@@ -3,6 +3,7 @@ package com.github.wmlynar.rosjava.o.nodes.axlesim;
 import java.util.concurrent.CountDownLatch;
 
 import org.ros.concurrent.CancellableLoop;
+import org.ros.message.Duration;
 import org.ros.message.Time;
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
@@ -33,6 +34,7 @@ public class NodeAxleSim extends AbstractNodeMain {
 	private CountDownLatch finishedLatch = new CountDownLatch(1);
 	
 	private double simTime;
+	private Time startTime;
 
 	@Override
 	public GraphName getDefaultNodeName() {
@@ -73,7 +75,7 @@ public class NodeAxleSim extends AbstractNodeMain {
 			protected void loop() throws InterruptedException {
 	            simulator.simulate(simTime);
 	            
-	            Time time = connectedNode.getCurrentTime();
+	            Time time = getSimTime(simTime);
 	            
 	            Odom o = new Odom();
 	            o.time = time;
@@ -92,17 +94,24 @@ public class NodeAxleSim extends AbstractNodeMain {
 	            Vector3Stamped distances = JavaToRos.newDistMessage(dist);
 	            distPublisher.publish(distances);
 	            
-	            simTime +=1;
+	            simTime +=0.25;
 	            if(simTime>100) {
 	            	finishedLatch.countDown();
 	            	cancel();
 	            }
-	            Thread.sleep(1000);
+	            Thread.sleep(250);
 			}
 		});
 	}
 
 	public void awaitFinished() throws InterruptedException {
 		finishedLatch.await();
+	}
+
+	private Time getSimTime(double simTime) {
+		if (this.startTime==null) {
+			this.startTime=connectedNode.getCurrentTime();
+		}
+		return startTime.add(new Duration(simTime));
 	}
 }
