@@ -28,6 +28,7 @@ public class JavaToRos {
     public static Odometry newOdometryMessage(Odom o) {
         Odometry m = messageFactory.newFromType(Odometry._TYPE);
         m.getHeader().setStamp(o.time);
+        m.getHeader().setFrameId(o.frame);
         m.getPose().getPose().getPosition().setX(o.x);
         m.getPose().getPose().getPosition().setY(o.y);
         m.getPose().getPose().setOrientation(newQuaternionFromYaw(o.yaw));
@@ -36,28 +37,29 @@ public class JavaToRos {
         return m;
     }
 
-    public static Odometry newOdomMessage(Time time, double x, double y, double speed, double angle, double rotation) {
-        Odometry m = messageFactory.newFromType(Odometry._TYPE);
-        m.getHeader().setStamp(time);
-        m.getPose().getPose().getPosition().setX(x);
-        m.getPose().getPose().getPosition().setY(y);
-        m.getPose().getPose().setOrientation(newQuaternionFromYaw(angle));
-        m.getTwist().getTwist().getLinear().setX(speed);
-        m.getTwist().getTwist().getAngular().setZ(rotation);
-        return m;
-    }
+//    public static Odometry newOdomMessage(Time time, double x, double y, double speed, double angle, double rotation) {
+//        Odometry m = messageFactory.newFromType(Odometry._TYPE);
+//        m.getHeader().setStamp(time);
+//        m.getPose().getPose().getPosition().setX(x);
+//        m.getPose().getPose().getPosition().setY(y);
+//        m.getPose().getPose().setOrientation(newQuaternionFromYaw(angle));
+//        m.getTwist().getTwist().getLinear().setX(speed);
+//        m.getTwist().getTwist().getAngular().setZ(rotation);
+//        return m;
+//    }
 
-    public static Vector3Stamped newDistMessage(Time time, double left, double right) {
-        Vector3Stamped m = messageFactory.newFromType(Vector3Stamped._TYPE);
-        m.getHeader().setStamp(time);
-        m.getVector().setX(left);
-        m.getVector().setY(right);
-        return m;
-    }
+//    public static Vector3Stamped newDistMessage(Time time, double left, double right) {
+//        Vector3Stamped m = messageFactory.newFromType(Vector3Stamped._TYPE);
+//        m.getHeader().setStamp(time);
+//        m.getVector().setX(left);
+//        m.getVector().setY(right);
+//        return m;
+//    }
     
     public static Vector3Stamped newDistMessage(Dist dist) {
         Vector3Stamped m = messageFactory.newFromType(Vector3Stamped._TYPE);
         m.getHeader().setStamp(dist.time);
+        m.getHeader().setFrameId(dist.frame);
         m.getVector().setX(dist.left);
         m.getVector().setY(dist.right);
         return m;

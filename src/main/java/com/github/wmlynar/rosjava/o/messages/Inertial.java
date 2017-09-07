@@ -6,5 +6,6 @@ public class Inertial {
 
 	public Time time;
 	public double angularYaw;
+	public String frame = "";
 
 }

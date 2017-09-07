@@ -7,5 +7,6 @@ public class Dist {
     public double left;
     public double right;
 	public Time time;
+	public String frame = "";
 
 }

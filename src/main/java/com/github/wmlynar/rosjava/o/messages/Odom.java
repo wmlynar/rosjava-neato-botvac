@@ -10,5 +10,6 @@ public class Odom {
 	public double yaw;
 	public double linear;
 	public double angular;
+	public String frame = "";
 
 }

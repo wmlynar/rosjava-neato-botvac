@@ -96,9 +96,7 @@ public class NodeOdomBuilder extends AbstractNodeMain {
         		simulator.simulate(time);
         		simulator.speed = speed;
             	
-                Plots.plotXTime("speed", "dist", dist.time.toSeconds(), speed);
-                
-                Plots.plotXTime("pos x", "sim", dist.time.toSeconds(), simulator.x);
+                Plots.plotXTime("speed", "d/dt distance", dist.time.toSeconds(), speed);
             }
         },2), queueSize);
         

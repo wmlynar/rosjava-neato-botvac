@@ -16,6 +16,7 @@ public class RosToJava {
     public static Scan fromScan(LaserScan scan) {
     	Scan o = new Scan();
         o.time = scan.getHeader().getStamp();
+        o.frame = scan.getHeader().getFrameId();
         o.ranges = scan.getRanges();
         return o;
     }
@@ -23,6 +24,7 @@ public class RosToJava {
     public static Odom fromOdom(Odometry odom) {
     	Odom o = new Odom();
         o.time = odom.getHeader().getStamp();
+        o.frame = odom.getHeader().getFrameId();
         o.x = odom.getPose().getPose().getPosition().getX();
         o.y = odom.getPose().getPose().getPosition().getY();
         o.yaw = QuaternionUtils.fromQuaternionToYaw(odom.getPose().getPose().getOrientation());
@@ -34,6 +36,7 @@ public class RosToJava {
     public static Dist fromDist(Vector3Stamped dist) {
     	Dist d = new Dist();
         d.time = dist.getHeader().getStamp();
+        d.frame = dist.getHeader().getFrameId();
         d.left = dist.getVector().getX();
         d.right = dist.getVector().getY();
         return d;
@@ -42,6 +45,7 @@ public class RosToJava {
 	public static Inertial fromImu(Imu imu) {
 		Inertial i = new Inertial();
         i.time = imu.getHeader().getStamp();
+        i.frame = imu.getHeader().getFrameId();
         i.angularYaw = imu.getAngularVelocity().getZ();
         return i;
 	}

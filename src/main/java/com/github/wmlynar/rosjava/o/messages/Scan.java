@@ -6,6 +6,7 @@ public class Scan {
 
 	public Time time;
 	public float[] ranges;
+	public String frame = "";
 
 	public Scan() {
 	}
