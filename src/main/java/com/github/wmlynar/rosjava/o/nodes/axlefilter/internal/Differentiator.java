@@ -2,18 +2,38 @@ package com.github.wmlynar.rosjava.o.nodes.axlefilter.internal;
 
 public class Differentiator {
 	
-	double prevD = 0;
-	double prevT = 0;
-	
-	public double differentiate(double t, double d) {
-		if(prevT==t) {
+	private double prevValue = 0;
+	private double prevTime = 0;
+	private double minTimeDifference = 0;
+	private boolean isInitialized = false;
+	private boolean isTimeOk = false;
+
+	public Differentiator(double minTimeDifference) {
+		this.minTimeDifference = minTimeDifference;
+	}
+
+	public double differentiate(double time, double value) {
+		if(!isInitialized) {
+			prevValue = value;
+			prevTime = time;
+			isInitialized = true;
 			return 0;
 		}
-		double dt = t - prevT;
-		double value = (d-prevD)/dt;
-		prevD = d;
-		prevT = t;
-		return value;
+		double dt = time - prevTime;
+		if(dt<minTimeDifference) {
+			isTimeOk = false;
+			return 0;
+		} else {
+			isTimeOk = true;
+		}
+		double diff = (value-prevValue)/dt;
+		prevValue = value;
+		prevTime = time;
+		return diff;
+	}
+	
+	public boolean isOk() {
+		return isInitialized && isTimeOk;
 	}
 
 }

@@ -7,7 +7,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		Differentiator diff = new Differentiator();
+		Differentiator diff = new Differentiator(1e-6);
 		
 		AxleWidthSimulator simulator = new AxleWidthSimulator();
 		simulator.setAxleWidth(0.25);
