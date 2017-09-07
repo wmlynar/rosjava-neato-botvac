@@ -45,7 +45,7 @@ public class AxleFilterStateMachine {
 		cov[AxleWidthModel.S][AxleWidthModel.S] = 1e-0;
 		cov[AxleWidthModel.A][AxleWidthModel.A] = 1e-10;
 		cov[AxleWidthModel.ROT][AxleWidthModel.ROT] = 1e-0;
-		cov[AxleWidthModel.WIDTH][AxleWidthModel.WIDTH] = 1e-2;
+		cov[AxleWidthModel.WIDTH][AxleWidthModel.WIDTH] = 0.2*0.2;
 
 		cov = model.getProcessNoiseCovariance();
 		cov[AxleWidthModel.X][AxleWidthModel.X] = 1e-10;

@@ -2,6 +2,8 @@ package com.github.wmlynar.rosjava.utils;
 
 import java.net.URI;
 
+import javax.swing.plaf.ActionMapUIResource;
+
 import org.ros.RosCore;
 import org.ros.internal.loader.CommandLineLoader;
 import org.ros.node.DefaultNodeMainExecutor;
@@ -86,12 +88,20 @@ public class RosMain {
         nodeMainExecutor.shutdown();
     }
 
-    public static void awaitForRegistrations(int number) throws InterruptedException {
-        registrations.awaitFor(number);
-    }
+//    public static void awaitForRegistrations(int number) throws InterruptedException {
+//        registrations.awaitFor(number);
+//    }
 
+    public static void resetConnectionCount() {
+    	connections.setCount(0);
+    }
+    
     public static void awaitForConnections(int number) throws InterruptedException {
-        connections.awaitFor(number);
+		int actual = 0;
+		while(actual < number) {
+			actual = connections.awaitFor(number,1000);
+			System.out.println("Connections: " + actual + " out of " +  number);
+		}
     }
 
     public static CountUpPublisherListener getPublisherListener() {

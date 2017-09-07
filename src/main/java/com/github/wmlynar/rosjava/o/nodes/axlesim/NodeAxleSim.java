@@ -35,8 +35,6 @@ public class NodeAxleSim extends AbstractNodeMain {
 	private CountDownLatch initializedLatch = new CountDownLatch(1);
 	private CountDownLatch finishedLatch = new CountDownLatch(1);
 
-    private CountUpPublisherListener publisherListener = new CountUpPublisherListener();
-	
 	private double simTime;
 	private Time startTime;
 
@@ -47,19 +45,17 @@ public class NodeAxleSim extends AbstractNodeMain {
 
 	@Override
 	public void onStart(final ConnectedNode connectedNode) {
-		publisherListener.setLog(connectedNode.getLog());
-		
 		odomPublisher = connectedNode.newPublisher("odom", Odometry._TYPE);
-		odomPublisher.addListener(publisherListener);
+		odomPublisher.addListener(RosMain.getPublisherListener());
 		
 		scanPublisher = connectedNode.newPublisher("scan", LaserScan._TYPE);
-		scanPublisher.addListener(publisherListener);
+		scanPublisher.addListener(RosMain.getPublisherListener());
 		
 		distPublisher = connectedNode.newPublisher("dist", Vector3Stamped._TYPE);
-		distPublisher.addListener(publisherListener);
+		distPublisher.addListener(RosMain.getPublisherListener());
 		
 		imuPublisher = connectedNode.newPublisher("data", Imu._TYPE);
-		imuPublisher.addListener(publisherListener);
+		imuPublisher.addListener(RosMain.getPublisherListener());
 
 		this.connectedNode = connectedNode;
 
@@ -117,10 +113,6 @@ public class NodeAxleSim extends AbstractNodeMain {
 		finishedLatch.await();
 	}
 
-    public void awaitForConnections(int count) throws InterruptedException {
-    	publisherListener.awaitForConnections(count);
-    }
-    
 	private Time getSimTime(double simTime) {
 		if (this.startTime==null) {
 			this.startTime=connectedNode.getCurrentTime();

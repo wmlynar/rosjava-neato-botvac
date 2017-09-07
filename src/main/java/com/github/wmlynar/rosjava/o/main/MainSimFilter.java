@@ -14,8 +14,7 @@ public class MainSimFilter {
         NodeAxleSim simNode = new NodeAxleSim();
         RosMain.executeNode(simNode);
         
-        filter.awaitForConnections(4);
-        simNode.awaitForConnections(5);
+        RosMain.awaitForConnections(8);
         
         simNode.start();
 	}

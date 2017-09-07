@@ -12,6 +12,13 @@ public class CountUpLatch {
         this.count = number;
     }
 
+	public void setCount(int i) {
+        synchronized (lock) {
+            count=i;
+            lock.notifyAll();
+        }
+	}
+	
     public void countUp() {
         synchronized (lock) {
             count++;
@@ -34,14 +41,16 @@ public class CountUpLatch {
     }
 
     public int awaitFor(int number, long milliseconds) throws InterruptedException {
-    	long expectedTime = System.currentTimeMillis() + milliseconds;
+    	long wait = milliseconds;
+    	long expectedTime = System.currentTimeMillis() + wait;
         synchronized (lock) {
-            while (count < number && milliseconds > 0) {
-                lock.wait(milliseconds);
-                milliseconds = expectedTime - System.currentTimeMillis();
+            while (count < number && wait > 0) {
+                lock.wait(wait);
+                wait = expectedTime - System.currentTimeMillis();
             }
             return count;
         }
     }
+
 
 }

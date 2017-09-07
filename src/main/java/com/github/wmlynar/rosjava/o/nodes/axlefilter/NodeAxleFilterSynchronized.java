@@ -70,7 +70,6 @@ public class NodeAxleFilterSynchronized extends AbstractNodeMain {
     private Subscriber<Vector3Stamped> distSubscriber;
     private Subscriber<Imu> imuSubscriber;
 
-    private CountUpSubscriberListener subscriberListener = new CountUpSubscriberListener();
     private CountUpLatch messagesCount = new CountUpLatch(0);
 
     private ScanMessageInterpreter scanInterpreter = new ScanMessageInterpreter();
@@ -91,12 +90,10 @@ public class NodeAxleFilterSynchronized extends AbstractNodeMain {
     @Override
     public void onStart(ConnectedNode connectedNode) {
     	
-    	subscriberListener.setLog(connectedNode.getLog());
-
         TimeSequencer timeSquencer = new TimeSequencer(0.5, 0.1, connectedNode);
 
         odomSubscriber = connectedNode.newSubscriber("odom", Odometry._TYPE);
-        odomSubscriber.addSubscriberListener(subscriberListener);
+        odomSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
         odomSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Odometry>() {
             @Override
             public void onNewMessage(Odometry m) {
@@ -107,7 +104,7 @@ public class NodeAxleFilterSynchronized extends AbstractNodeMain {
         },0), 10);
 
         scanSubscriber = connectedNode.newSubscriber("scan", LaserScan._TYPE);
-        scanSubscriber.addSubscriberListener(subscriberListener);
+        scanSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
         scanSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<LaserScan>() {
             @Override
             public void onNewMessage(LaserScan m) {
@@ -117,7 +114,7 @@ public class NodeAxleFilterSynchronized extends AbstractNodeMain {
         },1), queueSize);
 
         distSubscriber = connectedNode.newSubscriber("dist", Vector3Stamped._TYPE);
-        distSubscriber.addSubscriberListener(subscriberListener);
+        distSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
         distSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Vector3Stamped>() {
             @Override
             public void onNewMessage(Vector3Stamped m) {
@@ -128,7 +125,7 @@ public class NodeAxleFilterSynchronized extends AbstractNodeMain {
         },2), queueSize);
         
         imuSubscriber = connectedNode.newSubscriber("data", Imu._TYPE);
-        imuSubscriber.addSubscriberListener(subscriberListener);
+        imuSubscriber.addSubscriberListener(RosMain.getSubscriberListener());
         imuSubscriber.addMessageListener(timeSquencer.getListener(new MessageListener<Imu>() {
             @Override
             public void onNewMessage(Imu imu) {
@@ -143,10 +140,6 @@ public class NodeAxleFilterSynchronized extends AbstractNodeMain {
 			messagesCount.awaitFor(count);
 		} catch (InterruptedException e) {
 		}
-    }
-    
-    public void awaitForConnections(int count) throws InterruptedException {
-    	subscriberListener.awaitForConnections(count);
     }
 
 	private void countUp() {

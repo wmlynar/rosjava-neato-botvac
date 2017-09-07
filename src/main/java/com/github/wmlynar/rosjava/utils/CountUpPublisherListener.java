@@ -9,7 +9,6 @@ public class CountUpPublisherListener implements PublisherListener {
 
     private CountUpLatch registrations;
     private CountUpLatch connections;
-	private Log log = null;
 
     public CountUpPublisherListener() {
         this.registrations = new CountUpLatch();
@@ -46,19 +45,5 @@ public class CountUpPublisherListener implements PublisherListener {
     @Override
     public void onShutdown(Publisher arg0) {
     }
-
-	public void setLog(Log log) {
-		this.log = log;
-	}
-	
-	public void awaitForConnections(int count) throws InterruptedException {
-		int actual = 0;
-		while(actual < count) {
-			actual = connections.awaitFor(count,1000);
-			if(log!=null) {
-				log.info("Connections: " + connections.getCount() + " out of " +  count);
-			}
-		}
-	}
 
 }
