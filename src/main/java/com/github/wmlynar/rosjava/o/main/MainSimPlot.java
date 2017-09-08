@@ -5,7 +5,8 @@ import com.github.wmlynar.rosjava.o.nodes.plotter.NodePlotter;
 import com.github.wmlynar.rosjava.utils.RosMain;
 
 public class MainSimPlot {
-	public static void main(String[] args) {
+	
+	public static void main(String[] args) throws InterruptedException {
         RosMain.connectToRosCoreWithoutEnvironmentVariables();
 
         NodePlotter subscriber = new NodePlotter(10);
@@ -15,6 +16,7 @@ public class MainSimPlot {
         RosMain.executeNode(simNode);
         simNode.start();
         
+        RosMain.awaitForConnectionsNotIncreasing();
 		
 	}
 

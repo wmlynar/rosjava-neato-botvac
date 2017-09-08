@@ -19,8 +19,8 @@ public class MainPlayCsvAxleFilter {
         NodeRosLogPlayer playerNode = new NodeRosLogPlayer("src/main/resources/logs/with_gyro/rotating.csv");
         RosMain.executeNode(playerNode);
         
-        RosMain.awaitForConnections(12);
-        
+        RosMain.awaitForConnectionsNotIncreasing();
+       
         playerNode.start();
 	}
 

@@ -15,7 +15,7 @@ public class MainPlayCsvBeaconDetector {
         NodeBeaconDetector beaconDetector = new NodeBeaconDetector(10);
         RosMain.executeNode(beaconDetector);
         
-        RosMain.awaitForConnections(2);
+        RosMain.awaitForConnectionsNotIncreasing();
         
         playerNode.start();
 		

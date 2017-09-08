@@ -104,6 +104,21 @@ public class RosMain {
 		}
     }
 
+	public static void awaitForConnectionsNotIncreasing() throws InterruptedException {
+		awaitForConnectionsNotIncreasing(1, 5000, 1000);
+	}
+	
+    public static void awaitForConnectionsNotIncreasing(int minimalNumber, long firstMilliseconds, long laterMilliseconds) throws InterruptedException {
+		int actual = connections.awaitFor(minimalNumber,firstMilliseconds);
+		System.out.println("Connections: " + actual + " out of " +  minimalNumber);
+		int previous;
+		do {
+			previous = actual;
+			actual = connections.awaitFor(actual + 1,laterMilliseconds);
+			System.out.println("Connections: " + actual + " out of " +  minimalNumber);
+		} while(previous!=actual || actual<minimalNumber);
+    }
+
     public static CountUpPublisherListener getPublisherListener() {
         return publisherlistener;
     }

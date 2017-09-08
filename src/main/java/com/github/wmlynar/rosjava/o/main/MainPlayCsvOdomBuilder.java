@@ -16,7 +16,7 @@ public class MainPlayCsvOdomBuilder {
         NodeOdomBuilder odomBuilder = new NodeOdomBuilder(10);
         RosMain.executeNode(odomBuilder);
         
-        RosMain.awaitForConnections(2);
+        RosMain.awaitForConnectionsNotIncreasing();
         
         playerNode.start();
 		

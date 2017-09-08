@@ -6,7 +6,7 @@ import com.github.wmlynar.rosjava.utils.RosMain;
 
 public class MainPlayCsvPlot {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
         RosMain.connectToRosCoreWithoutEnvironmentVariables();
 
         NodeRosLogPlayer playerNode = new NodeRosLogPlayer("src/main/resources/logs/with_gyro/rotating.csv");
@@ -15,6 +15,7 @@ public class MainPlayCsvPlot {
         RosMain.executeNode(plotter);
         playerNode.start();
 
+        RosMain.awaitForConnectionsNotIncreasing();
 		
 	}
 
